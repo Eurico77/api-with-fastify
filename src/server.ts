@@ -1,15 +1,28 @@
-import fastify from 'fastify';
+import { env } from './env'
+import { db } from './database'
 
-const app = fastify();
+import crypto from 'node:crypto'
+import fastify from 'fastify'
 
-app.get('/', async (request, reply) => {
-  return { hello: 'world' };
-});
+const app = fastify()
+
+app.get('/', async () => {
+  const transactions = await db('transactions')
+    .insert({
+      id: crypto.randomUUID(),
+      title: 'Test',
+      description: 'Test',
+      amount: 100,
+    })
+    .returning('*')
+
+  return transactions
+})
 
 app
   .listen({
-    port: 3000,
+    port: env.PORT,
   })
   .then(() => {
-    console.log('Server listening on port 3000');
-  });
+    console.log(`Server listening on port ${env.PORT} 🚀`)
+  })
