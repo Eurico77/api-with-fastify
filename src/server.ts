@@ -1,22 +1,10 @@
 import { env } from './env'
-import { db } from './database'
-
-import crypto from 'node:crypto'
 import fastify from 'fastify'
+import { transactionsRoutes } from './routes/transactions'
 
 const app = fastify()
-
-app.get('/', async () => {
-  const transactions = await db('transactions')
-    .insert({
-      id: crypto.randomUUID(),
-      title: 'Test',
-      description: 'Test',
-      amount: 100,
-    })
-    .returning('*')
-
-  return transactions
+app.register(transactionsRoutes, {
+  prefix: '/transactions',
 })
 
 app
