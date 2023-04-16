@@ -10,4 +10,16 @@ export const config: Knex.Config = {
   },
 }
 
-export const db = knex(config)
+const configTestEnv: Knex.Config = {
+  client: 'sqlite3',
+  connection: {
+    filename: './db/app.db',
+  },
+  useNullAsDefault: true,
+  migrations: {
+    extension: 'ts',
+    directory: './src/database/migrations',
+  },
+}
+
+export const db = knex(env.NODE_ENV === 'test' ? configTestEnv : config)
